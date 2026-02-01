@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 import numpy as np
 import ctypes
+import deleteimmogad
 
 def tefitti_left_eye():
     eye_vertices = np.array([
@@ -149,20 +150,12 @@ def tefitti_left_pupil():
 
 def byline ():
     
-    f=0
-    index=[]
-    vertices=[]
-    for x in np.arange(-10,10.02,0.02):
-        for y in np.arange(10,9.96,-0.02):
-            index.extend([f])
-            vertices.extend([x,y])
-            f+=1
     eye_vertices = np.array(
-      vertices
+      deleteimmogad.vertices
         , dtype=np.float32)
     
     indices = np.array(
-        index, dtype=np.uint32)
+        deleteimmogad.index, dtype=np.uint32)
 
     VAO = glGenVertexArrays(1)
     VBO = glGenBuffers(1)

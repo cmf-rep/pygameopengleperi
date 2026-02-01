@@ -4,6 +4,7 @@ from OpenGL.GL import *
 import config
 from shader import create_shader_program
 from tefitti import *
+from deleteimmogad import passmonga
 
 def main():
     pygame.init()
@@ -17,7 +18,30 @@ def main():
     VAO_wp, EBO_wp, wp_index_count = tefitti_left_eye()
     VAO_iris, EBO_iris, iris_index_count = tefitti_left_iris()
     VAO_pupil, EBO_pupil, pupil_index_count = tefitti_left_pupil()
-    VAO_byline, EBO_byline, byline_index_count = byline()
+    f=0
+    index=[]
+    vertices=[]
+    VAO_byline=None
+    EBO_byline=None
+    byline_index_count=None
+    
+    for x in np.arange(-10,10.02,0.02):
+        for y in np.arange(10,9.96,-0.02):
+            index.extend([f])
+            vertices.extend([x,y])
+            f+=1
+            if x<=8.6 and y>=9.98:
+                r=0.353
+                g=0.851
+                b=0.988
+            else:
+                r=0.129
+                g=0.682
+                b=0.392
+            if f==3:
+                passmonga(vertices,index)
+                VAO_byline, EBO_byline, byline_index_count = byline()
+    
     
     glUseProgram(shader_program)
     scale_loc=glGetUniformLocation(shader_program,"scale")
@@ -33,14 +57,14 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+                    
         glClear(GL_COLOR_BUFFER_BIT)
         
         glUseProgram(shader_program)
         
         glUniform1f(scale_loc,scale)
         
-        glUniform3f(color_loc,0.55, 0.55, 0.55)
+        glUniform3f(color_loc,0.345, 0.812, 0.353)
         glBindVertexArray(VAO_wp)
         glDrawElements(GL_TRIANGLE_FAN, wp_index_count, GL_UNSIGNED_INT, None)
 
@@ -52,9 +76,9 @@ def main():
         glBindVertexArray(VAO_pupil)
         glDrawElements(GL_TRIANGLE_FAN, pupil_index_count, GL_UNSIGNED_INT, None)
         
-        glUniform3f(color_loc,0, 0, 0)
+        glUniform3f(color_loc,0,0,0)
         glBindVertexArray(VAO_byline)
-        glDrawElements(GL_TRIANGLE_STRIP, byline_index_count, GL_UNSIGNED_INT, None)
+        glDrawElements(GL_TRIANGLES, byline_index_count, GL_UNSIGNED_INT, None)
         
         glBindVertexArray(0)
         pygame.display.flip()
